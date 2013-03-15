@@ -3,22 +3,31 @@
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var mouseDown = 0;
-var chopperHeight = 26;
-var chopperWidth = 77;
+var font = "17 verdana";
+
+var textColor = "rgb(255,255,255)";
+var smokeColor = "rgb(209,209,209)";
+
 var ascentRate = 4; // in pixels per fram
 var descentRate = 5.5; // in pixels per frame
+
 var brickV = 6; // brick velocity
 var brickFrequency = 65; // difficulty level (must be <70, smaller numbers are harder)
 var brickHeight = 60;
 var brickWidth = 30;
+var brickColor = "rgb(255,5,5)";
+
+var chopperHeight = 26;
+var chopperWidth = 77;
 var chopper = new Image();
 chopper.src = "chopper.gif"
 
+var backgroundHeight = 350;
+var backgroundWidth = 702;
+var backgroundV = 2; // background scroll velocity
 var background = new Image();
 background.src = "bg.jpg"
 
-var backgroundHeight = 350;
-var backgroundWidth = 702;
 
 /* variables that will be reset every time setup is called: */
 var chopperX;
@@ -37,7 +46,7 @@ function setup() {
     brickList = new Array();
     smokeList = new Array();
 
-    chopperX = 55;
+    chopperX = 100;
     chopperY = 175;
     
     iterationCount = 0;
@@ -50,7 +59,9 @@ function setup() {
     startBrick.y = 150;
     brickList.push(startBrick)
 
-    
+    ctx.font = font;
+
+    ctx.fillStyle = brickColor;
     ctx.drawImage(background, 0, 0, backgroundWidth, backgroundHeight);
     ctx.fillRect(brickList[0].x, brickList[0].y, brickWidth, brickHeight);
     ctx.drawImage(chopper, chopperX, chopperY, chopperWidth, chopperHeight);
@@ -75,7 +86,8 @@ function draw() {
         animateBricks();
         collisionCheck();
 
-        ctx.fillText('Score:'+ score, 633, 330);
+        ctx.fillStyle = textColor
+        ctx.fillText('Score:'+ score, 625, 330);
 
         iterationCount++;
 
@@ -107,6 +119,7 @@ function animateBricks() {
         } 
         else {
             brickList[i].x = brickList[i].x - brickV
+            ctx.fillStyle = brickColor
             ctx.fillRect(brickList[i].x, brickList[i].y, brickWidth, brickHeight)
             
             // If enough distance (based on brickFrequency) has elapsed since 
@@ -127,6 +140,7 @@ function animateSmoke() {
         }
         else {
             smokeList[i].x = smokeList[i].x - brickV
+            ctx.fillStyle = smokeColor
             ctx.fillRect(smokeList[i].x, smokeList[i].y, 2, 2)
         }
     }
@@ -136,7 +150,7 @@ function animateBackground() {
     if(scrollVal >= canvas.width){
         scrollVal = 0;
     }
-    scrollVal+=brickV;       
+    scrollVal+=backgroundV;       
     // To go the other way instead
     ctx.drawImage(background, -scrollVal, 0, backgroundWidth, backgroundHeight);
     ctx.drawImage(background, canvas.width-scrollVal, 0, backgroundWidth, backgroundHeight);
