@@ -1,4 +1,4 @@
-js-canvas-toy
+canvas-helicopter
 =============
 Simple helicoper game, a shameless rip-off of [this](http://www.helicopterplay.com/helicopter/thehelicoptergame.php) helicopter game.
 
