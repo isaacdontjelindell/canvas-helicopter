@@ -3,7 +3,7 @@
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var mouseDown = 0;
-var font = "17 verdana";
+var font = "16 verdana";
 
 var textColor = "rgb(255,255,255)";
 var smokeColor = "rgb(209,209,209)";
@@ -20,7 +20,7 @@ var brickColor = "rgb(255,5,5)";
 var chopperHeight = 26;
 var chopperWidth = 77;
 var chopper = new Image();
-chopper.src = "chopper.gif"
+chopper.src = "chopper.png"
 
 var backgroundHeight = 350;
 var backgroundWidth = 702;
@@ -87,7 +87,8 @@ function draw() {
         collisionCheck();
 
         ctx.fillStyle = textColor
-        ctx.fillText('Score:'+ score, 625, 330);
+        ctx.fillText('Press spacebar to play/pause', 10, 340)
+        ctx.fillText('Score:'+ score, 625, 340);
 
         iterationCount++;
 
@@ -203,6 +204,16 @@ document.body.onmousedown = function() {
 document.body.onmouseup = function() {
     if(mouseDown > 0) {
         --mouseDown;
+    }
+}
+
+document.body.onkeypress = function(e) {
+    if(e.keyCode == 32) { // spacebar
+        if(gameState == "pause") {
+            play();
+        } else {
+            pause();
+        }
     }
 }
 
