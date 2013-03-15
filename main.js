@@ -8,11 +8,11 @@ var font = "16 verdana";
 var textColor = "rgb(255,255,255)";
 var smokeColor = "rgb(209,209,209)";
 
-var ascentRate = 4; // in pixels per fram
+var ascentRate = 3; // in pixels per fram
 var descentRate = 5.5; // in pixels per frame
 
 var brickV = 6; // brick velocity
-var brickFrequency = 65; // difficulty level (must be <70, smaller numbers are harder)
+var brickInterval = 40; // difficulty level (must be <70, smaller numbers are harder)
 var brickHeight = 60;
 var brickWidth = 30;
 var brickColor = "rgb(255,5,5)";
@@ -65,17 +65,26 @@ function setup() {
     ctx.drawImage(background, 0, 0, backgroundWidth, backgroundHeight);
     ctx.fillRect(brickList[0].x, brickList[0].y, brickWidth, brickHeight);
     ctx.drawImage(chopper, chopperX, chopperY, chopperWidth, chopperHeight);
+
+    ctx.fillStyle = textColor;
+    ctx.fillText('Press spacebar to play/pause', 10, 340)
 }
 
 function play() {
-    if(!(gameState == "play")) {
+    if(gameState == "pause") {
         intervalId = window.requestAnimationFrame(draw, canvas) //window.setInterval(draw, refreshRate);
         gameState = "play";
     }
 }
 
 function pause() { 
-    gameState = "pause"
+    if(gameState == "play") {
+        gameState = "pause"
+    }
+}
+
+function stop() {
+    gameState = "stop"
 }
 
 function draw() {
@@ -123,9 +132,9 @@ function animateBricks() {
             ctx.fillStyle = brickColor
             ctx.fillRect(brickList[i].x, brickList[i].y, brickWidth, brickHeight)
             
-            // If enough distance (based on brickFrequency) has elapsed since 
+            // If enough distance (based on brickInterval) has elapsed since 
             // the last brick was created, create another one
-            if(iterationCount >= brickFrequency) {
+            if(iterationCount >= brickInterval) {
                 addBrick();
                 iterationCount = 0;
                 score=score+10;
@@ -164,7 +173,7 @@ function animateBackground() {
  */
 function collisionCheck() {
     for(var i=0; i<brickList.length; i++) {
-        if (chopperX < (brickList[i].x + brickWidth) && (chopperX + chopperHeight)  > brickList[i].x
+        if (chopperX < (brickList[i].x + brickWidth) && (chopperX + chopperWidth) > brickList[i].x
                     && chopperY < (brickList[i].y + brickHeight) && (chopperY + chopperHeight) > brickList[i].y ) {
             gameOver();
         }
@@ -172,7 +181,7 @@ function collisionCheck() {
 }
 
 function gameOver() {
-    pause();
+    stop();
 }
 
 function addBrick() {
@@ -204,6 +213,9 @@ document.body.onmousedown = function() {
 document.body.onmouseup = function() {
     if(mouseDown > 0) {
         --mouseDown;
+    }
+    if(gameState == "pause") {
+        play();
     }
 }
 
