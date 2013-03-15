@@ -88,6 +88,9 @@ function animateBricks() {
         else {
             brickList[i].x = brickList[i].x - brickV
             ctx.fillRect(brickList[i].x, brickList[i].y, brickWidth, brickHeight)
+            
+            // If enough distance (based on brickFrequency) has elapsed since 
+            // the last brick was created, create another one
             if(iterationCount >= brickFrequency) {
                 addBrick();
                 iterationCount = 0;
@@ -96,14 +99,17 @@ function animateBricks() {
     }
 }
 
+/* Very naive collision detection using a bounding box.
+ * This will trigger a collision when a brick intersects with the helicopter GIF. 
+ * Since the GIF is square but the helicopter is not, collisions will be detected
+ * when the helicopter is merely close, and not actually contacting the brick.
+ */
 function collisionCheck() {
     for(var i=0; i<brickList.length; i++) {
         if (chopperX < (brickList[i].x + brickWidth) && (chopperX + chopperHeight)  > brickList[i].x
-             && chopperY < (brickList[i].y + brickHeight) && (chopperY + chopperHeight) > brickList[i].y ) {
-
+                    && chopperY < (brickList[i].y + brickHeight) && (chopperY + chopperHeight) > brickList[i].y ) {
             gameOver();
-         }
-
+        }
     }
 }
 
