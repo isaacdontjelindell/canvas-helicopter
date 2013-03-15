@@ -39,10 +39,15 @@ var gameState;
 var score;
 var scrollVal;
 
+
+window.onload = function () { setup(); }
+
 function setup() {
-    gameState = "pause"
+    gameState = "pause";
     clearScreen();
     
+    chopper.src = "chopper.png";
+
     brickList = new Array();
     smokeList = new Array();
 
@@ -67,19 +72,19 @@ function setup() {
     ctx.drawImage(chopper, chopperX, chopperY, chopperWidth, chopperHeight);
 
     ctx.fillStyle = textColor;
-    ctx.fillText('Press spacebar to play/pause', 10, 340)
+    ctx.fillText('Press spacebar to play/pause', 10, 340);
 }
 
 function play() {
     if(gameState == "pause") {
-        intervalId = window.requestAnimationFrame(draw, canvas) //window.setInterval(draw, refreshRate);
+        intervalId = window.requestAnimationFrame(draw, canvas); //window.setInterval(draw, refreshRate);
         gameState = "play";
     }
 }
 
 function pause() { 
     if(gameState == "play") {
-        gameState = "pause"
+        gameState = "pause";
     }
 }
 
@@ -94,15 +99,23 @@ function draw() {
         animateChopper();
         animateBricks();
         collisionCheck();
-
-        ctx.fillStyle = textColor
-        ctx.fillText('Press spacebar to play/pause', 10, 340)
+        ctx.font = font;
+        ctx.fillStyle = textColor;
+        ctx.fillText('Press spacebar to play/pause', 10, 340);
         ctx.fillText('Score:'+ score, 625, 340);
 
         iterationCount++;
-
         window.requestAnimationFrame(draw, canvas);
     }
+}
+
+function drawCrash() {
+    var chopperBurn = new Image();
+    chopper.src = "chopper_burn.png";
+    ctx.drawImage(chopper, chopperX, chopperY, chopperWidth, chopperHeight);
+    ctx.font = "40 Bold Verdana"
+
+    ctx.fillText("YOU SUCK!", 250, 80);
 }
 
 function animateChopper() {
@@ -182,6 +195,7 @@ function collisionCheck() {
 
 function gameOver() {
     stop();
+    drawCrash();
 }
 
 function addBrick() {
@@ -225,6 +239,11 @@ document.body.onkeypress = function(e) {
             play();
         } else {
             pause();
+        }
+    }
+    if(e.keyCode == 114) {
+        if(gameState != "play") {
+            setup()
         }
     }
 }

@@ -1,4 +1,26 @@
-#canvas {
+body {
+    width: 800;
+    margin: 0px auto 0px auto;
+    background-color: #A4D1FF;
+}
+
+#header {
+    text-shadow: 4px 4px 7px rgba(150, 150, 150, 0.76);
+    margin: 10px 5px 5px 5px;
+    text-align: center;
+}
+
+#container {
     border-style: solid;
     border-width: 2px;
+    margin: 5px auto 0px auto;
+    border-style: solid
+    border-width: 2px;
+    width: 700px;
+    height: 350px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.80);
+    background-color: #70B8FF;
 }
+
