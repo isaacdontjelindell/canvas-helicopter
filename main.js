@@ -14,31 +14,45 @@ var brickWidth = 30;
 var chopper = new Image();
 chopper.src = "chopper.gif"
 
+var background = new Image();
+background.src = "bg.jpg"
+
+var backgroundHeight = 350;
+var backgroundWidth = 702;
+
 /* variables that will be reset every time setup is called: */
 var chopperX;
 var chopperY;
 var iterationCount;
 var brickList;
+var smokeList;
 var gameState;
-
+var score;
+var scrollVal;
 
 function setup() {
     gameState = "pause"
     clearScreen();
+    
     brickList = new Array();
+    smokeList = new Array();
 
-    chopperX = 20;
+    chopperX = 55;
     chopperY = 175;
     
     iterationCount = 0;
+    score = 0;
+
+    scrollVal = 0;
 
     startBrick = {}
     startBrick.x = 400;
     startBrick.y = 150;
     brickList.push(startBrick)
 
+    
+    ctx.drawImage(background, 0, 0, backgroundWidth, backgroundHeight);
     ctx.fillRect(brickList[0].x, brickList[0].y, brickWidth, brickHeight);
-
     ctx.drawImage(chopper, chopperX, chopperY, chopperWidth, chopperHeight);
 }
 
@@ -56,9 +70,13 @@ function pause() {
 function draw() {
     if(gameState == "play") {
         clearScreen();
+        animateBackground();
         animateChopper();
         animateBricks();
         collisionCheck();
+
+        ctx.fillText('Score:'+ score, 633, 330);
+
         iterationCount++;
 
         window.requestAnimationFrame(draw, canvas);
@@ -78,6 +96,8 @@ function animateChopper() {
     }
 
     ctx.drawImage(chopper, chopperX, chopperY, chopperWidth, chopperHeight);
+    addSmokeTrail();
+    animateSmoke();
 }
 
 function animateBricks() {
@@ -94,9 +114,32 @@ function animateBricks() {
             if(iterationCount >= brickFrequency) {
                 addBrick();
                 iterationCount = 0;
+                score=score+10;
             }
         }
     }
+}
+
+function animateSmoke() {
+    for(var i=0; i<smokeList.length; i++) {
+        if(smokeList[i].x < 0) {
+            smokeList.splice(i, 1); // remove the smoke particle that outside the canvas
+        }
+        else {
+            smokeList[i].x = smokeList[i].x - brickV
+            ctx.fillRect(smokeList[i].x, smokeList[i].y, 2, 2)
+        }
+    }
+}
+
+function animateBackground() {
+    if(scrollVal >= canvas.width){
+        scrollVal = 0;
+    }
+    scrollVal+=brickV;       
+    // To go the other way instead
+    ctx.drawImage(background, -scrollVal, 0, backgroundWidth, backgroundHeight);
+    ctx.drawImage(background, canvas.width-scrollVal, 0, backgroundWidth, backgroundHeight);
 }
 
 /* Very naive collision detection using a bounding box.
@@ -124,6 +167,12 @@ function addBrick() {
     brickList.push(newBrick);
 }
 
+function addSmokeTrail() {
+    newParticle = {}
+    newParticle.x = chopperX
+    newParticle.y = chopperY + 4
+    smokeList.push(newParticle);
+}
 
 /* Heads up - if this function is just named clear(), onclick fails silently! */
 function clearScreen() {
@@ -133,10 +182,14 @@ function clearScreen() {
 
 /* This is a nifty trick! */
 document.body.onmousedown = function() { 
-  ++mouseDown;
+    if(!(mouseDown == 1)) {
+        ++mouseDown;
+    }
 }
 document.body.onmouseup = function() {
-  --mouseDown;
+    if(mouseDown > 0) {
+        --mouseDown;
+    }
 }
 
 
