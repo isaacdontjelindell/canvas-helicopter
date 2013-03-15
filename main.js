@@ -58,6 +58,7 @@ function draw() {
         clearScreen();
         animateChopper();
         animateBricks();
+        collisionCheck();
         iterationCount++;
 
         window.requestAnimationFrame(draw, canvas);
@@ -73,8 +74,7 @@ function animateChopper() {
 
     // border detection
     if( (chopperY < 0) || (chopperY > (canvas.height-chopperHeight)) ) {
-        pause();
-        setup();
+        gameOver();
     }
 
     ctx.drawImage(chopper, chopperX, chopperY, chopperWidth, chopperHeight);
@@ -94,6 +94,21 @@ function animateBricks() {
             }
         }
     }
+}
+
+function collisionCheck() {
+    for(var i=0; i<brickList.length; i++) {
+        if (chopperX < (brickList[i].x + brickWidth) && (chopperX + chopperHeight)  > brickList[i].x
+             && chopperY < (brickList[i].y + brickHeight) && (chopperY + chopperHeight) > brickList[i].y ) {
+
+            gameOver();
+         }
+
+    }
+}
+
+function gameOver() {
+    pause();
 }
 
 function addBrick() {
