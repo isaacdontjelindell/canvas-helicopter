@@ -10,12 +10,18 @@ body {
     text-align: center;
 }
 
+#instructions {
+    margin: 15px auto 0px auto;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 2px 3px 10px rgba(0, 0, 0, 0.80);
+    background-color: #70B8FF;
+    width: 700px;
+}
+
 #container {
-    border-style: solid;
-    border-width: 2px;
+    /*border-style: solid;*/
     margin: 5px auto 0px auto;
-    border-style: solid
-    border-width: 2px;
     width: 700px;
     height: 350px;
     padding: 10px;

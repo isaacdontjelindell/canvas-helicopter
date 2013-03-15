@@ -102,7 +102,7 @@ function draw() {
         ctx.font = font;
         ctx.fillStyle = textColor;
         ctx.fillText('Press spacebar to play/pause', 10, 340);
-        ctx.fillText('Score:'+ score, 625, 340);
+        ctx.fillText('Score:'+ score, 600, 340);
 
         iterationCount++;
         window.requestAnimationFrame(draw, canvas);
@@ -115,7 +115,7 @@ function drawCrash() {
     ctx.drawImage(chopper, chopperX, chopperY, chopperWidth, chopperHeight);
     ctx.font = "40 Bold Verdana"
 
-    ctx.fillText("YOU SUCK!", 250, 80);
+    ctx.fillText("YOU SUCK!", 240, 80);
 }
 
 function animateChopper() {
@@ -174,7 +174,6 @@ function animateBackground() {
         scrollVal = 0;
     }
     scrollVal+=backgroundV;       
-    // To go the other way instead
     ctx.drawImage(background, -scrollVal, 0, backgroundWidth, backgroundHeight);
     ctx.drawImage(background, canvas.width-scrollVal, 0, backgroundWidth, backgroundHeight);
 }
