@@ -3,6 +3,7 @@ var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 
 var mouseDown = 0;
+var iterationCount = 0;
 
 var chopper;
 var chopperX;
@@ -14,18 +15,37 @@ var descentRate;
 var intervalId;
 var refreshRate;
 
+var brickV; // velocity
+var brickFrequency; // difficulty level
+var brickHeight;
+var brickWidth;
+var brickList = new Array();
+
 function setup() {
     clearScreen();
 
     chopper = new Image();
     chopper.src = "chopper.gif"
 
-    chopperX = 10;
+    chopperX = 20;
     chopperY = 175;
 
-    ascentRate = 6; // pixels per interval
-    descentRate = 5; // "    "    "
-    refreshRate = 50; // milliseconds
+    ascentRate = 4; // pixels per interval
+    descentRate = 5.5; // "    "    "
+    refreshRate = 25; // millisecondsa
+
+    brickV = 6;
+    brickHeight = 60;
+    brickWidth = 30;
+    brickFrequency = 65;
+
+    startBrick = {}
+    startBrick.x = 400;
+    startBrick.y = 150;
+
+    brickList.push(startBrick)
+
+    ctx.fillRect(brickList[0].x, brickList[0].y, brickWidth, brickHeight);
 
     ctx.drawImage(chopper, chopperX, chopperY, 77, 26);
 }
@@ -40,6 +60,13 @@ function pause() {
 
 function draw() {
     clearScreen();
+    animateChopper();
+    animateObstacles();
+    iterationCount++;
+    console.log(iterationCount); // TODO remove
+}
+
+function animateChopper() {
     if(mouseDown) {
         chopperY = chopperY - ascentRate;
     } else {
@@ -48,6 +75,28 @@ function draw() {
     ctx.drawImage(chopper, chopperX, chopperY, 77, 26);
 }
 
+function animateObstacles() {
+    for(var i=0; i<brickList.length; i++) {
+        if(brickList[i].x < 0-brickWidth) {
+            brickList.splice(i, 1); // remove the brick that's outside the canvas
+        } 
+        else {
+            brickList[i].x = brickList[i].x - brickV
+            ctx.fillRect(brickList[i].x, brickList[i].y, brickWidth, brickHeight)
+            if(iterationCount >= brickFrequency) {
+                addBrick();
+                iterationCount = 0;
+            }
+        }
+    }
+}
+
+function addBrick() {
+    newBrick = {}
+    newBrick.x = canvas.width;
+    newBrick.y = Math.floor(Math.random() * (canvas.height-brickHeight))
+    brickList.push(newBrick);
+}
 
 /* Heads up - if this function is just named clear(), onclick fails silently! */
 function clearScreen() {
