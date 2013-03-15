@@ -1,69 +1,67 @@
 
+/* global constants */
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
-
 var mouseDown = 0;
-var iterationCount = 0;
+var chopperHeight = 26;
+var chopperWidth = 77;
+var ascentRate = 4; // in pixels per fram
+var descentRate = 5.5; // in pixels per frame
+var brickV = 6; // brick velocity
+var brickFrequency = 65; // difficulty level (must be <70, smaller numbers are harder)
+var brickHeight = 60;
+var brickWidth = 30;
+var chopper = new Image();
+chopper.src = "chopper.gif"
 
-var chopper;
+/* variables that will be reset every time setup is called: */
 var chopperX;
 var chopperY;
+var iterationCount;
+var brickList;
+var gameState;
 
-var ascentRate;
-var descentRate;
-
-var intervalId;
-var refreshRate;
-
-var brickV; // velocity
-var brickFrequency; // difficulty level
-var brickHeight;
-var brickWidth;
-var brickList = new Array();
 
 function setup() {
+    gameState = "pause"
     clearScreen();
-
-    chopper = new Image();
-    chopper.src = "chopper.gif"
+    brickList = new Array();
 
     chopperX = 20;
     chopperY = 175;
-
-    ascentRate = 4; // pixels per interval
-    descentRate = 5.5; // "    "    "
-    refreshRate = 25; // millisecondsa
-
-    brickV = 6;
-    brickHeight = 60;
-    brickWidth = 30;
-    brickFrequency = 65;
+    
+    iterationCount = 0;
 
     startBrick = {}
     startBrick.x = 400;
     startBrick.y = 150;
-
     brickList.push(startBrick)
 
     ctx.fillRect(brickList[0].x, brickList[0].y, brickWidth, brickHeight);
 
-    ctx.drawImage(chopper, chopperX, chopperY, 77, 26);
+    ctx.drawImage(chopper, chopperX, chopperY, chopperWidth, chopperHeight);
 }
 
 function play() {
-    intervalId = window.setInterval(draw, refreshRate);
+    if(!(gameState == "play")) {
+        intervalId = window.requestAnimationFrame(draw, canvas) //window.setInterval(draw, refreshRate);
+        gameState = "play";
+    }
 }
 
-function pause() {
-    clearInterval(intervalId);
+function pause() { 
+    gameState = "pause"
 }
 
 function draw() {
-    clearScreen();
-    animateChopper();
-    animateObstacles();
-    iterationCount++;
-    console.log(iterationCount); // TODO remove
+    if(gameState == "play") {
+        clearScreen();
+        animateChopper();
+        animateBricks();
+        iterationCount++;
+
+        window.requestAnimationFrame(draw, canvas);
+    }
 }
 
 function animateChopper() {
@@ -72,10 +70,17 @@ function animateChopper() {
     } else {
         chopperY = chopperY + descentRate;
     }
-    ctx.drawImage(chopper, chopperX, chopperY, 77, 26);
+
+    // border detection
+    if( (chopperY < 0) || (chopperY > (canvas.height-chopperHeight)) ) {
+        pause();
+        setup();
+    }
+
+    ctx.drawImage(chopper, chopperX, chopperY, chopperWidth, chopperHeight);
 }
 
-function animateObstacles() {
+function animateBricks() {
     for(var i=0; i<brickList.length; i++) {
         if(brickList[i].x < 0-brickWidth) {
             brickList.splice(i, 1); // remove the brick that's outside the canvas
@@ -98,17 +103,21 @@ function addBrick() {
     brickList.push(newBrick);
 }
 
+
 /* Heads up - if this function is just named clear(), onclick fails silently! */
 function clearScreen() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
+
+/* This is a nifty trick! */
 document.body.onmousedown = function() { 
   ++mouseDown;
 }
 document.body.onmouseup = function() {
   --mouseDown;
 }
+
 
 /**
  * Provides requestAnimationFrame in a cross browser way.
