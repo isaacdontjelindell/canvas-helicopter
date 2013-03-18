@@ -98,11 +98,12 @@ function draw() {
         animateBackground();
         animateChopper();
         animateBricks();
-        collisionCheck();
         ctx.font = font;
         ctx.fillStyle = textColor;
         ctx.fillText('Press spacebar to play/pause', 10, 340);
         ctx.fillText('Score:'+ score, 600, 340);
+        
+        collisionCheck();
 
         iterationCount++;
         window.requestAnimationFrame(draw, canvas);
@@ -110,12 +111,11 @@ function draw() {
 }
 
 function drawCrash() {
-    var chopperBurn = new Image();
     chopper.src = "chopper_burn.png";
     ctx.drawImage(chopper, chopperX, chopperY, chopperWidth, chopperHeight);
     ctx.font = "40 Bold Verdana"
 
-    ctx.fillText("YOU SUCK!", 240, 80);
+    ctx.fillText("YOU LOSE!", 240, 80);
 }
 
 function animateChopper() {
@@ -180,7 +180,7 @@ function animateBackground() {
 
 /* Very naive collision detection using a bounding box.
  * This will trigger a collision when a brick intersects with the helicopter GIF. 
- * Since the GIF is square but the helicopter is not, collisions will be detected
+ * Since the image is square but the helicopter is not, collisions will be detected
  * when the helicopter is merely close, and not actually contacting the brick.
  */
 function collisionCheck() {
