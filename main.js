@@ -8,8 +8,11 @@ var font = "16 verdana";
 var textColor = "rgb(255,255,255)";
 var smokeColor = "rgb(209,209,209)";
 
-var ascentRate = 3; // in pixels per fram
-var descentRate = 5.5; // in pixels per frame
+var initialAscentRate = 1.5;
+var initialDescentRate = 1.5; // in pixels per frame
+var gravity = .08
+var liftFactor = .04; // how quickly the climb rate increases
+var terminalVelocity = 5; // descent and ascent rate will never exceed this
 
 var brickV = 6; // brick velocity
 var brickInterval = 40; // difficulty level (must be <70, smaller numbers are harder)
@@ -39,6 +42,9 @@ var gameState;
 var score;
 var scrollVal;
 
+var ascentRate;
+var descentRate;
+
 
 window.onload = function () { setup(); }
 
@@ -53,6 +59,9 @@ function setup() {
 
     chopperX = 100;
     chopperY = 175;
+
+    descentRate = initialDescentRate;
+    ascentRate = initialAscentRate;
     
     iterationCount = 0;
     score = 0;
@@ -120,9 +129,19 @@ function drawCrash() {
 
 function animateChopper() {
     if(mouseDown) {
+        descentRate = initialDescentRate;
         chopperY = chopperY - ascentRate;
+
+        if(!(ascentRate > terminalVelocity)) {
+            ascentRate += liftFactor;
+        }
     } else {
+        ascentRate = initialAscentRate;
         chopperY = chopperY + descentRate;
+    
+        if(!(descentRate > terminalVelocity)) {
+            descentRate += gravity;
+        }
     }
 
     // border detection
