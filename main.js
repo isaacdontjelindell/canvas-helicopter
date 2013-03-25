@@ -8,14 +8,14 @@ var font = "16 verdana";
 var textColor = "rgb(255,255,255)";
 var smokeColor = "rgb(209,209,209)";
 
-var initialAscentRate = 1.5;
+var initialAscentRate = 1.0;
 var initialDescentRate = 1.5; // in pixels per frame
-var gravity = .08
+var gravity = .08  // how quickly the descent rate increases
 var liftFactor = .04; // how quickly the climb rate increases
 var terminalVelocity = 5; // descent and ascent rate will never exceed this
 
 var brickV = 6; // brick velocity
-var brickInterval = 40; // difficulty level (must be <70, smaller numbers are harder)
+var brickInterval = 40; // difficulty level 
 var brickHeight = 60;
 var brickWidth = 30;
 var brickColor = "rgb(255,5,5)";
@@ -68,16 +68,11 @@ function setup() {
 
     scrollVal = 0;
 
-    startBrick = {}
-    startBrick.x = 400;
-    startBrick.y = 150;
-    brickList.push(startBrick)
-
     ctx.font = font;
 
-    ctx.fillStyle = brickColor;
+    addBrick();
+
     ctx.drawImage(background, 0, 0, backgroundWidth, backgroundHeight);
-    ctx.fillRect(brickList[0].x, brickList[0].y, brickWidth, brickHeight);
     ctx.drawImage(chopper, chopperX, chopperY, chopperWidth, chopperHeight);
 
     ctx.fillStyle = textColor;
@@ -113,8 +108,7 @@ function draw() {
         ctx.fillText('Score:'+ score, 600, 340);
         
         collisionCheck();
-
-        iterationCount++;
+        
         window.requestAnimationFrame(draw, canvas);
     }
 }
@@ -155,6 +149,7 @@ function animateChopper() {
 }
 
 function animateBricks() {
+    iterationCount++;
     for(var i=0; i<brickList.length; i++) {
         if(brickList[i].x < 0-brickWidth) {
             brickList.splice(i, 1); // remove the brick that's outside the canvas
